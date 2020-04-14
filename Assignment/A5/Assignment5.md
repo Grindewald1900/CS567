@@ -24,6 +24,16 @@ For a single switch, variant kinds of switches could be included.
 </br>
 <center> Figure 2.  The structure of RMBM switch </center>
 
-**Some Variants**
+**Some Variants**  
+Generally speaking, RMBM model has two basic functions ,segment and fuse, which is mentioned above. Segment means the processor is able to divide a bus into separate segments while fuse means different buses could be connected.  
+Base on segment and fuse, RMBM has four variants.   
+● Basic RMBM (B-RMBM), which is non-reconfigurable, just like a PRAM. Connect switch is the only choice to constitute its switch set. In this way, B-RMBM is not able to fuse or segment buses.  
+● Segmenting RMBM (S-RMBM), Compared to B-RMBM, it has the segment switch other than connect switch. S-RMBM has the ability to segment but not fuse.  
+● Fusing RMBM (F-RMBM), the F-RMBM has both fuse switch and connect switch. F-RMBM is able to fuse buses, however, it cannot segment buses.  
+● Extended RMBM (E-RMBM), it has all the three switches mentioned, in this way, E-RMBM has the ability to fuse and segment buses.
+
+**Directed Variants**  
+
+**Problems can be solved**  
 
 **Relation between RMBM and shared memory models**

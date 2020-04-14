@@ -8,7 +8,22 @@ With the rapid development of CPU manufacturing technology, it has become more a
 
 **The Defination of RMBM**
 
-The Reconfigurable Multiple Bus Machine (RMBM), is one of the models for reconfiguration.
+The Reconfigurable Multiple Bus Machine (RMBM), is one of the models for reconfiguration. Compared with R-mesh or even RN, RMBM use multiple buses to communicate with one processor. Suppose we have N processors and M buses in this model, we index the processors from 0 to N-1 and buses from 0 to M-1 (see figure 1).  
+We define the switch set to be the intersection of a processor and a bus, because there could be more than one switches in the intersection.  In this way, the RMBM model will have M*N switch sets in total.
+
+<div align=center><img src="http://15.222.11.163/wp-content/uploads/2020/04/RMBM-2-1024x734.png" width="50%" height="50%"></div>  
+</br>
+<center> Figure 1.  The architecture of RMBM </center>  
+</br>
+
+For a single switch, variant kinds of switches could be included.   
+● Connect switch: connect a port to the bus, like C(i,j,0) in figure 2, it connect the write port of processor i to bus j.  
+● Segment switch: disconnect or segment the bus, which means these switches is used to divide the bus into segments, like S(i,j,0) and S(i,j,1) in figure 2, which segment bus j to three parts.  
+● Fuse switch: connect the fuse line to buses. For example, f(i,j) fuse processor i to bus j, if processor i open some other fuse switch such as f(i,j+1) and f(i,j-1), then bus j-1, j and j+1 will be fused together.  
+<div align=center><img src="http://15.222.11.163/wp-content/uploads/2020/04/RMBM-3.png" width="50%" height="50%"></div>  
+</br>
+<center> Figure 2.  The structure of RMBM switch </center>
+
 **Some Variants**
 
 **Relation between RMBM and shared memory models**

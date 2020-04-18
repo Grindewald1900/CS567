@@ -24,6 +24,19 @@ For a single switch, variant kinds of switches could be included.
 </br>
 <center> Figure 2.  The structure of RMBM switch </center>
 
+Futhermore, we can specify RMBM by different memory accessing mode, that is concurrence and exclusion. So we have 4 kinds of RMBM:   
+● Exclusive-read exclusive-write (EREW) RMBM  
+● Concurrent-read exclusive-write (CREW) RMBM   
+● Concurrent-read concurrent-write (CRCW) RMBM   
+● Exclusive-read concurrent-write (ERCW) RMBM    
+
+While concurrent read is comprehensible, concurrent write will need some strategy to resolve the conflict. As a consequence, 4 strategies were raised:  
+● Common: when different processors write on the same bus simultaneously, the value should also be same.   
+● Collision: when different processors write on the same bus simultaneously, a collision value should be written instead of the values from processors.  
+● Priority: when different processors write on the same bus simultaneously, the processor with lower index has the priority to write.   
+● Combining: when different processors write on the same bus simultaneously, an operation should be done to all the values provided by processors. The operation could be one of the follows:   
+sum, product, logical conjunction, logical disjunction, logical exclusive disjunction, maximum and and minimum.  
+
 **Some Variants**  
 Generally speaking, RMBM model has two basic functions ,segment and fuse, which is mentioned above. Segment means the processor is able to divide a bus into separate segments while fuse means different buses could be connected.  
 Base on segment and fuse, RMBM has four variants.   

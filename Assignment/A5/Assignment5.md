@@ -46,6 +46,12 @@ Base on segment and fuse, RMBM has four variants.
 ● Extended RMBM (E-RMBM), it has all the three switches mentioned, in this way, E-RMBM has the ability to fuse and segment buses.
 
 **Directed Variants**  
+DRMBM, which denotes the Directed Reconfigurable Multiple Bus Machine, is another variant of RMBM. Obviously the main difference between DRMBM and RMBM is the direction. In a RMBM model, a signal can be transmitted to all the buses fused together, while in the DRMBM model, the signal can only be transmitted in a certain direction.   
+Actually when we look into the structure of DRMBM model, we will notice that every processor is connected by two fuse lines with different direction, as is shown in figure 3. One of them from top to bottom, the other keeps a inverse direction.   
+Take figure 3 as an example, if we connect all the buses to fuse line 1，and a signal from processor i is placed on bus j, then that signal will be only transmitted to  bus k( k > j ) that connected to fuse line.
+<div align=center><img src="http://15.222.11.163/wp-content/uploads/2020/04/RMBM-4.png" width="50%" height="50%"></div>  
+</br>
+<center> Figure 3.  The structure of DRMBM switch </center>
 
 **Problems can be solved**  
 

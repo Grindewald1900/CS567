@@ -4,7 +4,7 @@
 ### Yi Ren (002269013)&ensp;&ensp;    Wentao Lu (002276355)  
 
 **Some background**  
-With the rapid development of CPU manufacturing technology, it has become more and more difficult to improve the single core performance, that's why CPU manufacturers turned to develop multicore processors. As consequence, people began to put more effort on parallel computing research, which means a problem can be solved by more than one processors simultaneously. In this way, reconfiguration was raised to satisfy the need of this kind of problems. Compared with traditional models, reconfigurable models can make better use of hardware resources, that means the processors could be used to run the tasks when available. As a result, reconfigurable models make it possible to solve the problem in a more efficient and quicker way.
+With the rapid development of CPU manufacturing technology, it has become more and more difficult to improve the single core performance, that's why CPU manufacturers turned to develop multicore processors. As consequence, people began to put more effort on parallel computation research, which means a problem can be solved by more than one processors simultaneously. In this way, reconfiguration was raised to satisfy the need of this kind of problems. Compared with traditional models, reconfigurable models can make better use of hardware resources, that means the processors could be used to run the tasks when available. As a result, reconfigurable models make it possible to solve the problem in a more efficient and quicker way.
 
 **The Defination of RMBM**
 
@@ -48,10 +48,19 @@ Base on segment and fuse, RMBM has four variants.
 **Directed Variants**  
 DRMBM, which denotes the Directed Reconfigurable Multiple Bus Machine, is another variant of RMBM. Obviously the main difference between DRMBM and RMBM is the direction. In a RMBM model, a signal can be transmitted to all the buses fused together, while in the DRMBM model, the signal can only be transmitted in a certain direction.   
 Actually when we look into the structure of DRMBM model, we will notice that every processor is connected by two fuse lines with different direction, as is shown in figure 3. One of them from top to bottom, the other keeps a inverse direction.   
-Take figure 3 as an example, if we connect all the buses to fuse line 1，and a signal from processor i is placed on bus j, then that signal will be only transmitted to  bus k( k > j ) that connected to fuse line.
+Take figure 3 as an example, if we connect all the buses to fuse line 1，and a signal from processor i is placed on bus j, then that signal will be only transmitted to  bus k( k > j ) that connected to fuse line.  
+However, RMBM can be emulated by DRMBM when fuse line 1 and fuse line 2 are synchronized, which means the two switches of bus j and fuse line need to keep the identical state, so that the signal could be transmitted in both directions.
 <div align=center><img src="http://15.222.11.163/wp-content/uploads/2020/04/RMBM-4.png" width="50%" height="50%"></div>  
 </br>
 <center> Figure 3.  The structure of DRMBM switch </center>
+</br>
+
+
+Similar with RMBM model, DRMBM also has some variants:  
+● Basic DRMBM (B-DRMBM  
+● Segmenting DRMBM (S-DRMBM)  
+● Fusing DRMBM (F-DRMBM)   
+● Extended DRMBM (E-DRMBM)  
 
 **Problems can be solved**  
 

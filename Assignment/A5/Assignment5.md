@@ -63,5 +63,28 @@ Similar with RMBM model, DRMBM also has some variants:
 ● Extended DRMBM (E-DRMBM)  
 
 **Problems can be solved**  
+As we know, many problems can be solved by parallel computation models with linear or even constant time. However, some of them can exploit the power of reconfiguration to a great extend,  such as Permutation Routing, Counting Bits, Prefix Sums of Bits, Neighbor Localization and Chain Sorting. One interesting thing is many problems can be solved by different kinds of reconfigurable models, with respective resources and complexity.  
+For RMBM models, some of them resemble R-Mesh models. For instance, the F-RMBM is similar with HVR-RMBM, as F-RMBM comprises vertical fuse lines and horizontal buses. Also, the S-RMBM, which can be seen as a set of segmentable buses, can be used to simulate R-Mesh.   
+On the one hand, RMBM models use fewer resources (processors) than R-Mesh. On the other hand, it is slower than its R-Mesh counterparts, since a processor in RMBM models is permitted to set only one switch at a time, which means much time need to be spent on switch setting.  
+As mentioned above, some R-Mesh algorithms can be perfomed on S-RMBM in constant time, we will take Neighbor Localization and Chain Sorting as an example. The object for Neighbor Localization is connect active processors with a single bus, every active processor will hold a 'pointer' which point at the next active processor, as is illustrateed in Figure 4. If a processor is active, the inner East port and West port will be disconnected, otherwise they will be fused.
 
-**Relation between RMBM and shared memory models**
+<div align=center><img src="http://15.222.11.163/wp-content/uploads/2020/04/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6-1-1024x255.png" width="50%" height="50%"></div>  
+</br>
+<center> Figure 4.  An example of Neighbor Localization </center>
+</br>
+
+Neighbor Localizatin is a key point to solve Chain Sorting problem, suppose we have n integers from a<sub>0</sub> to a<sub>n-1</sub>, we can use Chain Sorting to put these integers in a certain order. We denote the given integer by b bits, then the Chain Sorting problem could be solved with a few steps as following.   
+● Step 1： Denote a 2<sup>b</sup> * n R-Mesh, each processor(0，j) in the first row holds the input values respectively, as Figure 5.    
+● Step 2：For every column i from 0 to n-1， broadcast the value from processor(i,0).  
+● Step 3：For every row i from 0 to 2<sup>b</sup>-1, we note processor(i, j) active if and only if a<sub>j</sub> == i.   
+● Step 4：For every row i from 0 to 2<sup>b</sup>-1, we construct a list L<sub>i</sub> with Neighbor Localizatin, to indicate the order of same input values.   
+● Step 5：For every list  L<sub>i</sub> in Step 3，we denote p(j) as the pointer which point to the next integer in the list.   
+● Step 6：For a certain list L<sub>i</sub>, send the first and the last integer to processor(i,0). If no data is send to processor(i,0), we will note it as inactive.  
+● Step 7：Connect all the lists in ascending order, which means the last integer of L<sub>i</sub> will point to the first integer of  L<sub>k</sub>, when processor(k,0) is the next active node for processor(i,0).
+
+<div align=center><img src="http://15.222.11.163/wp-content/uploads/2020/04/RMBM-7-1024x721.png" width="50%" height="50%"></div>  
+</br>
+<center> Figure 5.  An example of R-Mesh </center>
+</br>
+
+**Relation betweenPermutation Routing RMBM and shared memory models**

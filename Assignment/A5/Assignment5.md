@@ -1,15 +1,15 @@
 ### CS567 - Special/Advanced Topics in Algorithms
 #### Assignment 5
 #### Group members :
-##### Yi Ren (002269013)
-##### Wentao Lu (002276355)  
-##### Simin Li (002259850)
+**Yi Ren (002269013)** &ensp;&ensp;
+**Wentao Lu (002276355)** &ensp;&ensp;
+**Simin Li (002259850)**
 
-**Some background**  
+**1. Some background**  
 
 With the rapid development of CPU manufacturing technology, it has become more and more difficult to improve the single-core performance, that's why CPU manufacturers turned to develop multicore processors. As a consequence, people began to put more effort into parallel computation research, which means a problem can be solved by more than one processor simultaneously. In this way, reconfiguration was raised to satisfy the need for this kind of problem. Compared with traditional models, reconfigurable models can make better use of hardware resources, which means the processors could be used to run the tasks when available. As a result, reconfigurable models make it possible to solve the problem more efficiently.
 
-**The Definition of RMBM**
+**2. The Definition of RMBM**
 
 The Reconfigurable Multiple Bus Machine (RMBM), is one of the models for reconfiguration. Compared with R-mesh or even RN, RMBM use multiple buses to communicate with one processor. Suppose we have N processors and M buses in this model, we index the processors from 0 to N-1 and buses from 0 to M-1 (see figure 1).  
 We define the switch set to be the intersection of a processor and a bus because there could be more than one switches in the intersection.  In this way, the RMBM model will have M*N switch sets in total.
@@ -40,7 +40,7 @@ While concurrent read is comprehensible, the concurrent write will need some str
 ● Combining: when different processors write on the same bus simultaneously, an operation should be done to all the values provided by processors. The operation could be one of the follows:   
 sum, product, logical conjunction, logical disjunction, logical exclusive disjunction, maximum and minimum.  
 
-**Some Variants**  
+**3. Some Variants**  
 
 Generally speaking, the RMBM model has two basic functions, segment, and fuse, which is mentioned above. Segment means the processor can divide a bus into separate segments while fuse means different buses could be connected.  
 Base on segment and fuse, RMBM has four variants.   
@@ -49,7 +49,7 @@ Base on segment and fuse, RMBM has four variants.
 ● Fusing RMBM (F-RMBM), the F-RMBM has both fuse switch and connect switch. F-RMBM can fuse buses, however, it cannot segment buses.  
 ● Extended RMBM (E-RMBM), it has all the three switches mentioned, in this way, E-RMBM can fuse and segment buses.
 
-**Directed Variants**  
+**4. Directed Variants**  
 
 DRMBM, which denotes the Directed Reconfigurable Multiple Bus Machine, is another variant of RMBM. The main difference between DRMBM and RMBM is the direction. In an RMBM model, a signal can be transmitted to all the buses fused, while in the DRMBM model, the signal can only be transmitted in a certain direction.   
 Actually, when we look into the structure of the DRMBM model, we will notice that every processor is connected by two fuse lines in a different direction, as is shown in figure 3. One of them from top to bottom, the other keeps an inverse direction.   
@@ -67,7 +67,7 @@ Similar to RMBM model, DRMBM also has some variants:
 ● Fusing DRMBM (F-DRMBM)   
 ● Extended DRMBM (E-DRMBM)  
 
-**Problems can be solved**  
+**5. Problems can be solved**  
 
 As we know, many problems can be solved by parallel computation models with linear or even constant time. However, some of them can exploit the power of reconfiguration to a great extend,  such as Permutation Routing, Counting Bits, Prefix Sums of Bits, Neighbor Localization and Chain Sorting. One interesting thing is many problems can be solved by different kinds of reconfigurable models, with respective resources and complexity.  
 
@@ -103,7 +103,7 @@ As mentioned, we can perform this algorithm on an S-RMBM model, which has n proc
 
 On the one hand, RMBM models use fewer resources (processors) than R-Mesh, which seems to be economic. On the other hand, it is slower than its R-Mesh counterparts, since a processor in RMBM models is permitted to set only one switch at a time, which means time needs to be spent on the switch setting.   
 
-**Relation between RMBM and shared memory models**  
+**6. Relation between RMBM and shared memory models**  
 
 The shared memory model is one of the conventional models for parallel computation, all the processors share a common memory, which means any processor has access to any memory unit. Parallel Random Access Machine (PRAM) is one of the shared memory models, it is widely used for its concise and comprehensible architecture. Broadcast with Selective Reduction (BSR) is also a shared memory model, it is based on the CRCW PRAM model with a unique combining collision resolution. Obviously, the main difference between RMBM and shared memory models is reconfiguration features, such as segment and fuse. PRAM models are non-configurable whereas RMBM models can change the connectivity between processors and buses with reconfiguration.
 

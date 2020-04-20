@@ -1,7 +1,9 @@
-## CS571 - Graph Theory and Algorithms
-### Assignment 5
-### Group members :
-### Yi Ren (002269013)&ensp;&ensp;    Wentao Lu (002276355)  
+### CS567 - Special/Advanced Topics in Algorithms
+#### Assignment 5
+#### Group members :
+##### Yi Ren (002269013)
+##### Wentao Lu (002276355)  
+##### Simin Li (002259850)
 
 **Some background**  
 

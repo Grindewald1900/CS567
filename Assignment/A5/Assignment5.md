@@ -81,7 +81,7 @@ As mentioned above, some R-Mesh algorithms can be performed on S-RMBM in constan
 </br>
 
 Neighbor Localization is a key point to solve Chain Sorting problem, suppose we have n integers from a<sub>0</sub> to a<sub>n-1</sub>, we can use Chain Sorting to put these integers in a certain order. We denote the given integer by b bits, then the Chain Sorting problem could be solved with a few steps as following.   
-● Step 1： Denote a 2<sup>b</sup> * n R-Mesh, each processor(0,j) in the first row holds the input values respectively, as Figure 5.    
+● Step 1：Denote a 2<sup>b</sup> * n R-Mesh, each processor(0,j) in the first row holds the input values respectively, as Figure 5.    
 ● Step 2：For every column i from 0 to n-1， broadcast the value from processor(i,0).  
 ● Step 3：For every row i from 0 to 2<sup>b</sup>-1, we note processor(i, j) active if and only if a<sub>j</sub> == i.   
 ● Step 4：For every row i from 0 to 2<sup>b</sup>-1, we construct a list L<sub>i</sub> with Neighbor Localizatin, to indicate the order of same input values.   
@@ -112,7 +112,7 @@ For a problem of size N and for some constant c > 0, a polynomially bounded inst
 
 Generally speaking, RMBM models are more powerful than PRAM models, although some of the PRAM models are as powerful as the weak RMBMs.  
 ● B-RMBM, as the weakest RMBM, is as powerful as PRAM. As we know, the B-RMBM doesn't have the segment or fuse feature, therefore it is non-reconfigurable like the PRAM models.  
-● CRCW PRAM is as powerful as CREW S-RMBM. Actually, each step of a PRIORITY CRCW PRAM with P processors and S shared memory cells can be simulated in O(1) time on a CREW S-RMBM [P + S, S].
+● CRCW PRAM is as powerful as CREW S-RMBM. Actually, each step of a PRIORITY CRCW PRAM with P processors and S shared memory cells can be simulated in O(1) time on a CREW S-RMBM [P + S, S].  
 ● F-RMBM and E-RMBM are more powerful than PRAM models. In fact, all of the fusing models are more powerful than PRAM models.  
 The computational power comparison is illustrated in Figure 7.  
 

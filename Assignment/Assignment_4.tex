@@ -1,0 +1,211 @@
+\documentclass[11pt]{article}
+
+
+% preamble
+\usepackage[margin=1in]{geometry}
+\usepackage{palatino}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathpazo}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{enumitem}  % control the indentation value of an enumerate environment
+\usepackage{siunitx}
+\sisetup{
+  round-mode = places,
+  round-precision = 2,
+}
+
+\usepackage[backend=bibtex,style=ieee]{biblatex}
+\bibliography{assignment_4}
+
+\usepackage[type={CC}, modifier={by-nc-sa}, version={3.0},]{doclicense}
+\usepackage{pgf,tikz,pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+% \pagestyle{empty}
+\renewcommand{\figurename}{\hspace{-12mm}Example}
+
+\title{CS 467/567, Assignment 4}
+\author{Wentao Lu (002276355), Yi Ren (002269013)}
+\date{}
+
+
+% document
+\begin{document}
+  \maketitle
+  \pagenumbering{arabic}
+
+  \definecolor{ffqqqq}{rgb}{1,0,0}
+  \definecolor{qqqqff}{rgb}{0,0,1}
+
+  \section{Divide and Conquer Prefix Computations}
+  \begin{enumerate}
+    \item In step 1 we recursively perform prefix computation on each subsequence of size $n^{1/2}$ using $n^{1/2}$ processors. Suppose our recursive algorithm on the entire sequence $S$ has running time $t(n)$, then the recursion call on each subsequence takes $t(n^{1/2})$. Since this is done in parallel, this step takes $t(n^{1/2})$.
+
+    In step 2, the sequence $s(1,n^{1/2}), s(2,n^{1/2}), \dots, s(n^{1/2}-1,n^{1/2})$ contains every last element of a subsequence except the first one, so there are only $n^{1/2}-1$ elements, but we have $n$ processors available. We can take advantage of all of them by letting $n^{1/2}$ processors work on each element simultaneously, that is, for some element $s(i,n^{1/2})$, we use $n^{1/2}$ processors in parallel to perform binary operations on $s(i,n^{1/2})$ with all other elements $s(j,n^{1/2})$, where $j \neq i, 1 \leq j \leq n^{1/2}-1$. Since we have $n$ processors so that all elements can update in parallel, this step takes $O(1)$. However, this does not work for all binary operations, in fact, the binary operation must be both associative and commutative, such as addition, multiplication and union, but not concatenation because concurrent writes would mess up the order. Besides, this speed up is possible only with the Combining CRCW PRAM model such that concurrent reads and writes can be effectively reconciled.
+
+    In step 3, for each subsequence we use $n^{1/2}$ processors to combine its elements with the last element in the preceding subsequence. Each element can be mapped to a processor, so this single operation is done in parallel, this step takes $O(1)$ time.
+
+    Now combining these results we have $t(n) = t(n^{1/2}) + O(1)$. To derive the running time from this equation, we substitute $n$ with $e^m$, so $t(e^m) = t(e^{m/2}) + O(1)$. Let $s(m) = t(e^m)$, then $s(m) = s(m/2) + O(1)$. According to the Master's Theorem, this implies that
+    \begin{equation*}
+      s(m) = O(\log m) \hspace{3mm} \Rightarrow \hspace{3mm} t(n) = t(e^m) = s(m) = O(\log m) = O(\log \log n)
+    \end{equation*}
+
+    \item If we want to reduce the number of processors to $O(n/\log \log n)$, the previous partition will not work, we need a new partition. Besides, we want to follow the previous three steps, but need to make some modifications.
+
+    In concrete, we will divide $S$ into $n/\log \log n$ subsequences or groups, each group has size $\log \log n$. Since the number of groups is equal to the number of processors, each group can only have one processor, so in step 1, prefix computation must be executed sequentially within each group, while all groups do this in parallel. Hence, this step takes $O(\log \log n)$.
+
+    In step 2, the sequence will be $s(1,\log \log n), s(2,\log \log n), \dots, s(n/\log \log n-1,\log \log n)$ because we only have $n/\log \log n$ groups, processors and last elements. To perform prefix computation on this sequence, we will adopt the algorithm in Question 1. As we have shown in Question 1, that algorithm runs in $O(\log \log n)$ time on $n$ elements using $n$ processors, so here with $n/\log \log n$ elements and processors, it will take $O(\log \log(n/\log \log n))$ time to run. By removing the trivial terms, we have
+    \begin{equation*}
+      O(\log \log(n/\log \log n)) = O(\log(\log n-\log(\log \log n))) = O(\log \log n)
+    \end{equation*}
+
+    In step 3, for the same reason as in step 1, the combining operation has to be executed sequentially for each group due to the lack of processors. As a result, each group takes $O(\log \log n)$ to run, while different groups run in parallel with each other. This step takes $O(\log \log n)$.
+
+    In summation, the total running time is $3 \times O(\log \log n) = O(\log \log n)$ which is identical to the previous one, but the cost is optimal as we are now using less than $n$ processors.
+
+    \item The result obtained in Question 2 has several implications.
+
+    We have seen that it is possible to devise an optimal parallel algorithm that takes a suboptimal algorithm as an intermediate step. The divide and conquer approach allows us to divide a problem into many subproblems which can be solved in parallel, and the way we partition the data can sometimes make a difference. In addition, different PRAM models may lead to different optimal algorithms to solve the same problem, we are free to choose among them depending on the scenario. This gives us a lot more flexibility from a practical perspective since the number of processors and hardware is often fixed in real world. For example, compared to the other optimal algorithm discussed in the class notes, this one is also optimal but much faster, so it can be very useful if we are strict on the running time and have sufficient processors that support CRCW PRAM models. It has also proved the possibility of applications being highly scalable based on commutative binary operations such as prefix sum. For example, the array packing problem uses addition as the underlying binary operation, so that as long as the hardware requirement is satisfied, it can easily scale up to boost performance, especially when the input array size is huge.
+
+  \end{enumerate}
+
+  \section{Descending in a Hypercube}
+  If two integers differ by $2^k$, then in their binary representation, all bits must be the same except the $k$-th bit where they differ by 1. That is, in the $j$-th iteration of the D\footnotesize ESCEND \normalsize algorithm, the binary operation is applied on any pair of processors whose indices differ only at the $j$-th bit. A bit can be either 0 or 1, only 2 possible values. Therefore, in each iteration, all processors are divided into halves by some bit, one half will exchange data with the other half via the binary operation. After $g$ iterations, we would have divided the set of processors bit by bit in every possible way, so that every processor has talked to all the other processors exactly once, either directly or indirectly.
+  \begin{enumerate}[leftmargin=*]
+    \item[1.] Since the addition operation is commutative, it doesn't matter if we loop from the highest bit or the lowest bit, so we don't mind whether the D\footnotesize ESCEND \normalsize or A\footnotesize SCEND \normalsize algorithm is being used. In order to place the final result in $P_0$ whose index is a bunch of zeros in binary format, during the $j$-th step we must store the sum of $P_i$ and $P_{i+2^j}$ into $P_i$ because $i_j=0$. Then after $g$ iterations, the value in each processor will be added exactly once to $P_0$. So we define
+    \begin{enumerate}
+        \item[] O\footnotesize PERATION\normalsize($P_i$, $P_{i+2^j}$) to be \fbox{$P_i$ = $P_i$ + $P_{i+2^j}$}
+    \end{enumerate}
+    As an example, we can graphically illustrate how it works in a 3 dimensional hypercube. In the figure below, processors $P_0,P_1,\dots,P_7$ correspond to the 8 corner vertices of the cube, which are represented in their binary format as $(0,0,0),(0,0,1),\dots,(1,1,1)$. For simplicity, suppose that initially each processor has value $x_i=1$, so we expect $P_0$ to be 8 in the end.
+
+    In the first iteration the algorithm looks at the highest bit, which is 0 for vertices on the left side and 1 for vertices on the right side. So as to perform the binary operation, values on the right side are added to those on the left. Vertices whose values have been updated are colored blue. Likewise, the second round looks at the middle bit, so values on the upper side are added to those on the lower side, and so forth. When the algorithm finishes, $P_0(0,0,0)$ has been involved in all iterations and colored blue for three times, hence it has the sum of all values and we color it red. In the end, we managed to compute the sum of 8 numbers in merely 3 steps.
+  \end{enumerate}
+
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
+    \clip(-1,-8.5) rectangle (16,6.6);
+    \draw [line width=0.4pt] (3.5,-7.5)-- (5.5,-5.5);
+    \draw [line width=0.4pt] (7.5,-7.5)-- (9.5,-5.5);
+    \draw [line width=0.4pt] (3.5,-3.5)-- (5.5,-1.5);
+    \draw [line width=0.4pt] (7.5,-3.5)-- (9.5,-1.5);
+    \draw [line width=0.4pt] (0,0)-- (2,2);
+    \draw [line width=0.4pt] (4,0)-- (6,2);
+    \draw [line width=0.4pt] (0,4)-- (2,6);
+    \draw [line width=0.4pt] (4,4)-- (6,6);
+    \draw [line width=0.4pt] (8,0)-- (10,2);
+    \draw [line width=0.4pt] (12,0)-- (14,2);
+    \draw [line width=0.4pt] (8,4)-- (10,6);
+    \draw [line width=0.4pt] (12,4)-- (14,6);
+    \draw (0.7150220913107512,-0.25439503619441556) node[anchor=north west] {(a) right to left};
+    \draw (8.676730486008838,-0.216132368148914) node[anchor=north west] {(b) top to bottom};
+    \draw (4.332842415316643,-7.715615305067217) node[anchor=north west] {(c) back to front};
+    \draw [line width=0.4pt] (0,4)-- (4,4);
+    \draw [line width=0.4pt] (2,6)-- (6,6);
+    \draw [line width=0.4pt] (0,0)-- (4,0);
+    \draw [line width=0.4pt] (2,2)-- (6,2);
+    \draw [line width=0.4pt] (0,4)-- (0,0);
+    \draw [line width=0.4pt] (2,2)-- (2,6);
+    \draw [line width=0.4pt] (6,2)-- (6,6);
+    \draw [line width=0.4pt] (4,4)-- (4,0);
+    \draw [line width=0.4pt] (14,6)-- (14,2);
+    \draw [line width=0.4pt] (8,4)-- (12,4);
+    \draw [line width=0.4pt] (10,6)-- (14,6);
+    \draw [line width=0.4pt] (8,0)-- (12,0);
+    \draw [line width=0.4pt] (10,2)-- (14,2);
+    \draw [line width=0.4pt] (8,4)-- (8,0);
+    \draw [line width=0.4pt] (12,0)-- (12,4);
+    \draw [line width=0.4pt] (10,6)-- (10,2);
+    \draw [line width=0.4pt] (5.5,-1.5)-- (9.5,-1.5);
+    \draw [line width=0.4pt] (3.5,-3.5)-- (7.5,-3.5);
+    \draw [line width=0.4pt] (9.5,-5.5)-- (9.5,-1.5);
+    \draw [line width=0.4pt] (7.5,-7.5)-- (3.5,-7.5);
+    \draw [line width=0.4pt] (5.5,-5.5)-- (5.5,-1.5);
+    \draw [line width=0.4pt] (3.5,-3.5)-- (3.5,-7.5);
+    \draw [line width=0.4pt] (9.5,-5.5)-- (5.5,-5.5);
+    \draw [line width=0.4pt] (7.5,-3.5)-- (7.5,-7.5);
+    \draw [->,line width=0.4pt,dash pattern=on 1pt off 1pt] (3.5,2.9) -- (0.5,2.9);
+    \draw [->,line width=0.4pt,dash pattern=on 1pt off 1pt] (9.622754360465116,3.5725472383720938) -- (9.622754360465116,0.5725472383720931);
+    \draw [->,line width=0.4pt,dash pattern=on 1pt off 1pt] (7,-3) -- (5,-5);
+    \begin{scriptsize}
+    \draw [fill=ffqqqq] (3.5,-7.5) circle (2.5pt);
+    \draw[color=ffqqqq] (4.59499263622975,-7.193846949327817) node {(0,0,0) = 8};
+    \draw [fill=qqqqff] (7.5,-7.5) circle (2.5pt);
+    \draw[color=qqqqff] (8.100883652430046+0.5,-7.093846949327817-0.1) node {(1,0,0) = 4};
+    \draw [fill=qqqqff] (7.5,-3.5) circle (2.5pt);
+    \draw[color=qqqqff] (8.100883652430046+0.5,-3.0953981385729055-0.1) node {(1,1,0) = 2};
+    \draw [fill=qqqqff] (3.5,-3.5) circle (2.5pt);
+    \draw[color=qqqqff] (4.09499263622975+0.5,-3.0953981385729055-0.1) node {(0,1,0) = 4};
+    \draw [fill=black] (5.5,-5.5) circle (2.5pt);
+    \draw[color=black] (6.0979381443298974+0.2,-5.085056876938985-0.1) node {(0,0,1) = 4};
+    \draw [fill=black] (9.5,-5.5) circle (2.5pt);
+    \draw[color=black] (10.103829160530191+0.2,-5.085056876938985-0.1) node {(1,0,1) = 2};
+    \draw [fill=black] (9.5,-1.5) circle (2.5pt);
+    \draw[color=black] (10.103829160530191+0.2,-1.0866080661840742-0.1) node {(1,1,1) = 1};
+    \draw [fill=black] (5.5,-1.5) circle (2.5pt);
+    \draw[color=black] (6.0979381443298974+0.2,-1.0866080661840742-0.1) node {(0,1,1) = 2};
+    \draw [fill=qqqqff] (0,0) circle (2.5pt);
+    \draw[color=qqqqff] (1.1023564064801179,0.30563598759048614) node {(0,0,0) = 2};
+    \draw [fill=black] (4,0) circle (2.5pt);
+    \draw[color=black] (4.595729013254787+0.5,0.40563598759048614-0.1) node {(1,0,0) = 1};
+    \draw [fill=black] (4,4) circle (2.5pt);
+    \draw[color=black] (4.595729013254787+0.5,4.404084798345398-0.1) node {(1,1,0) = 1};
+    \draw [fill=qqqqff] (0,4) circle (2.5pt);
+    \draw[color=qqqqff] (0.6023564064801179+0.5,4.404084798345398-0.1) node {(0,1,0) = 2};
+    \draw [fill=qqqqff] (2,2) circle (2.5pt);
+    \draw[color=qqqqff] (2.6053019145802656+0.2,2.4144260599793173-0.1) node {(0,0,1) = 2};
+    \draw [fill=black] (6,2) circle (2.5pt);
+    \draw[color=black] (6.598674521354934+0.2,2.4144260599793173-0.1) node {(1,0,1) = 1};
+    \draw [fill=black] (6,6) circle (2.5pt);
+    \draw[color=black] (6.598674521354934+0.2,6.412874870734228-0.1) node {(1,1,1) = 1};
+    \draw [fill=qqqqff] (2,6) circle (2.5pt);
+    \draw[color=qqqqff] (2.6053019145802656+0.2,6.412874870734228-0.1) node {(0,1,1) = 2};
+    \draw [fill=qqqqff] (8,0) circle (2.5pt);
+    \draw[color=qqqqff] (9.10162002945508,0.30563598759048614) node {(0,0,0) = 4};
+    \draw [fill=qqqqff] (12,0) circle (2.5pt);
+    \draw[color=qqqqff] (12.59499263622975+0.5,0.40563598759048614-0.1) node {(1,0,0) = 2};
+    \draw [fill=black] (12,4) circle (2.5pt);
+    \draw[color=black] (12.59499263622975+0.5,4.404084798345398-0.1) node {(1,1,0) = 1};
+    \draw [fill=black] (8,4) circle (2.5pt);
+    \draw[color=black] (8.60162002945508+0.5,4.404084798345398-0.1) node {(0,1,0) = 2};
+    \draw [fill=qqqqff] (10,2) circle (2.5pt);
+    \draw[color=qqqqff] (10.604565537555228+0.2,2.4144260599793173-0.1) node {(0,0,1) = 4};
+    \draw [fill=qqqqff] (14,2) circle (2.5pt);
+    \draw[color=qqqqff] (14.597938144329897+0.2,2.4144260599793173-0.1) node {(1,0,1) = 2};
+    \draw [fill=black] (14,6) circle (2.5pt);
+    \draw[color=black] (14.597938144329897+0.2,6.412874870734228-0.1) node {(1,1,1) = 1};
+    \draw [fill=black] (10,6) circle (2.5pt);
+    \draw[color=black] (10.604565537555228+0.2,6.412874870734228-0.1) node {(0,1,1) = 2};
+    \end{scriptsize}
+    \end{tikzpicture}
+    \vspace{-9mm}
+    \caption{Parallel sum in a 3-hypercube}
+  \end{figure}
+
+  \begin{enumerate}[leftmargin=*]
+    \item[2.] No matter which bit we loop from, the D\footnotesize ESCEND \normalsize or A\footnotesize SCEND \normalsize algorithm always divides the processors by a different dimension in each round, then the binary operation is performed on pairs of processors, one from each group. Suppose that we use the A\footnotesize SCEND \normalsize algorithm that loops from the $0$-th bit, further assume that $P_k$ has the datum set $\{x\}$ while other processors have no data ($\emptyset$) initially. In order to broadcast, we can simply define
+    \begin{enumerate}
+        \item[] O\footnotesize PERATION\normalsize($P_i$, $P_{i+2^j}$) to be \fbox{$P_i \bigcup P_{i+2^j}$}
+    \end{enumerate}
+
+    In the first round, $P_k$ sends $\{x\}$ to its counterpart $\bar{P_{k}}$ in the other group via the binary operation, this implies that $P_k$ and $\bar{P_{k}}$ can only differ by 1 at the $0$-th bit. On the other hand, the rest of the processors are empty, so the binary operation has no effect on them. When this round finishes, now 2 processors know about $\{x\}$. In the second round, we have a new partition of processors. Since $P_k$ and $\bar{P_{k}}$ differs only at the $0$-th bit but now we have divided the processors by another bit, they cannot be counterparts this time or in any future rounds. Hence, they will both have a new counterpart who can receive the datum $\{x\}$. When this round finishes, now 4 processors know about $\{x\}$, and so forth...
+
+    Given that any two processors can be counterparts in only one round, we will always have new pairs of counterparts in each round. As a result, after the $j$-th iteration, $2^j$ processors will know about $\{x\}$, and finally the datum will be propagated across the entire interconnection network.
+
+    \item[3.] The D\footnotesize ESCEND \normalsize and A\footnotesize SCEND \normalsize paradigm can be a powerful tool in many scenarios.
+
+    If the binary operation is set intersection and each processor has a set, we can find the common values and remove duplicates. If the binary operation is set union, we can also find all distinct values or aggregate the data. For other binary operations such as the max()/min() function or multiplication, we can compute the maximum, minimum and product of numbers in an array or other data structures. It is also possible to use logical gates in parallel, where each processor handles a condition that is either true or false. For instance, we can check if the constraints of a linear program are violated, or if an interpretation of the 3-SAT formula is satisfiable.
+
+  \end{enumerate}
+
+
+
+
+  \vspace{8mm}
+  \printbibliography
+
+\end{document}
